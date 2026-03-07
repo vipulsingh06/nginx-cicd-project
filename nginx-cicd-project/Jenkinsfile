@@ -2,6 +2,12 @@ pipeline {
     agent any
 
     stages {
+		stage('Debug Files') {
+    		steps {
+        		sh 'ls -la'
+    		}
+		}
+		
         stage('Build Docker Image') {
             steps {
                 echo 'Creating Docker image...'
