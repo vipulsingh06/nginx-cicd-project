@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git 'https://github.com/vipulsingh06/nginx-cicd-project.git'
+            }
+        }
+        stage('Build Docker image') {
+            echo 'Creating Docker image...'
+        }
+        stage('Deploy to Kubernetes') {
+            echo 'Deploing to kubernetes....'
+        }
+        stage('Start python server') {
+            steps {
+                sh '''
+                cd website
+                nohup python3 -m http.server 8000 &
+                '''
+            }
+        }
+    }
+}
