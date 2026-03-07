@@ -8,12 +8,20 @@ pipeline {
             }
             
         }
+        
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploing to kubernetes....'
             }
-            
         }
+
+        stage('Debug Workspace') {
+            steps {
+                sh 'pwd'
+                sh 'ls -la'
+            }
+        }        
+
         stage('Start python server') {
             steps {
                 sh '''
@@ -23,4 +31,6 @@ pipeline {
             }
         }
     }
+    
 }
+
