@@ -2,11 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Build Docker image') {
+        stage('Build Docker Image') {
             steps {
                 echo 'Creating Docker image...'
+                sh 'docker build -t nginx-website .'
             }
             
+        }
+
+        stage('Stop Old Container') {
+            steps {
+		echo 'Stoping Old Container'
+                sh 'docker stop nginx-container || true'
+                sh 'docker rm nginx-container || true'
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+		echo 'Running Container'
+                sh 'docker run -d -p 80:80 --name nginx-container nginx-website'
+            }
         }
 
         stage('Deploy to Kubernetes') {
@@ -14,22 +30,7 @@ pipeline {
                 echo 'Deploing to kubernetes....'
             }
         }
-
-        stage('Debug Workspace') {
-            steps {
-                sh 'pwd'
-                sh 'ls -la'
-            }
-        }        
-        stage('Deploy with Nginx') {
-            steps {
-                sh '''
-                sudo rm -rf /var/www/html/*
-                sudo cp -r nginx-cicd-project/website/* /var/www/html/
-                sudo systemctl restart nginx
-                '''
-            }
-        }
+    
 
     }
     
