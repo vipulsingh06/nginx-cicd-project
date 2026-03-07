@@ -8,7 +8,7 @@ pipeline {
             }
             
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
                 echo 'Deploing to kubernetes....'
@@ -24,10 +24,8 @@ pipeline {
 
         stage('Start python server') {
             steps {
-                sh '''
-                cd website
-                nohup python3 -m http.server 8000 &
-                '''
+                dir('nginx-cicd-project/website') {
+                    sh 'python3 -m http.server 8000'
             }
         }
     }
