@@ -2,11 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/vipulsingh06/nginx-cicd-project.git'
-            }
-        }
         stage('Build Docker image') {
             steps {
                 echo 'Creating Docker image...'
