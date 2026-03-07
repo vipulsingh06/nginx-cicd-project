@@ -21,13 +21,16 @@ pipeline {
                 sh 'ls -la'
             }
         }        
-
-        stage('Start python server') {
+        stage('Deploy with Nginx') {
             steps {
-                dir('nginx-cicd-project/website') {
-                    sh 'python3 -m http.server 8000'
+                sh '''
+                sudo rm -rf /var/www/html/*
+                sudo cp -r nginx-cicd-project/website/* /var/www/html/
+                sudo systemctl restart nginx
+                '''
             }
         }
+
     }
     
 }
