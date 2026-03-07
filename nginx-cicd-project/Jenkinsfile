@@ -8,10 +8,16 @@ pipeline {
             }
         }
         stage('Build Docker image') {
-            echo 'Creating Docker image...'
+            steps {
+                echo 'Creating Docker image...'
+            }
+            
         }
         stage('Deploy to Kubernetes') {
-            echo 'Deploing to kubernetes....'
+            steps {
+                echo 'Deploing to kubernetes....'
+            }
+            
         }
         stage('Start python server') {
             steps {
