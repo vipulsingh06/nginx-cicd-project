@@ -16,13 +16,6 @@ pipeline {
             
         }
 
-        stage('Stop Old Container') {
-            steps {
-		echo 'Stoping Old Container'
-                sh 'docker stop nginx-container || true'
-                sh 'docker rm nginx-container || true'
-            }
-        }
 
         stage('Load Image Into Kind') {
             steps {
@@ -33,9 +26,12 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-        echo 'Deploing to kubernetes....'
-                sh 'kubectl apply -f ./nginx-cicd-project/deployment.yaml'  
-                sh 'kubectl apply -f ./nginx-cicd-project/service.yaml'     
+        echo 'Deploying to kubernetes....'
+        sh '''
+        kubectl apply -f ./nginx-cicd-project/deployment.yaml
+        kubectl apply -f ./nginx-cicd-project/service.yaml
+        kubectl rollout restart deployment nginx-website
+        '''   
             }
         }
     
