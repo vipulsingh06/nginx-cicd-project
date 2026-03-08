@@ -27,7 +27,7 @@ pipeline {
         stage('Run New Container') {
             steps {
 		echo 'Running Container'
-                sh 'docker run -d -p 80:80 --name nginx-container nginx-website'
+                sh 'docker run -d -p 80:80 --restart unless-stopped --name nginx-container nginx-website'
             }
         }
 
