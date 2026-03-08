@@ -24,16 +24,18 @@ pipeline {
             }
         }
 
-        stage('Run New Container') {
+        stage('Load Image Into Kind') {
             steps {
-		echo 'Running Container'
-                sh 'docker run -d -p 80:80 --restart unless-stopped --name nginx-container nginx-website'
+		echo 'Loading image into kind'
+                sh 'kind load docker-image nginx-website'
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                echo 'Deploing to kubernetes....'
+        echo 'Deploing to kubernetes....'
+                sh 'kubectl apply -f ./nginx-cicd-project/deployment.yaml'  
+                sh 'kubectl apply -f ./nginx-cicd-project/service.yaml'     
             }
         }
     
