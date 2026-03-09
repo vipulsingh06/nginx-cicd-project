@@ -28,37 +28,35 @@ pipeline {
             }
         }
 
-    stage('Deploy to Kubernetes') {
-        steps {
-        sh '''
-        export KUBECONFIG=/var/lib/jenkins/.kube/config
+        stage('Deploy to Kubernetes') {
+            steps {
+            sh '''
+            export KUBECONFIG=/var/lib/jenkins/.kube/config
 
-        echo "Checking cluster..."
-        /usr/bin/kubectl cluster-info
-        /usr/bin/kubectl get nodes
+            echo "Waiting for Kubernetes API..."
+            for i in {1..10}; do
+            /usr/bin/kubectl cluster-info && break
+            sleep 5
+            done
 
-        sleep 5
+            /usr/bin/kubectl get nodes
 
-        echo "Deploying..."
-        for i in {1..3}; do
-          /usr/bin/kubectl apply --validate=false -f ./nginx-cicd-project/deployment.yaml && break
-          sleep 5
-        done
+            /usr/bin/kubectl apply --validate=false -f ./nginx-cicd-project/deployment.yaml
+            /usr/bin/kubectl apply --validate=false -f ./nginx-cicd-project/service.yaml
 
-        /usr/bin/kubectl apply --validate=false -f ./nginx-cicd-project/service.yaml
-        /usr/bin/kubectl rollout restart deployment nginx-website
-        /usr/bin/kubectl rollout status deployment nginx-website
-        '''
+            /usr/bin/kubectl rollout restart deployment nginx-website
+            /usr/bin/kubectl rollout status deployment nginx-website
+            '''
             }
         }
 
         stage('Expose Service') {
             steps {
-        echo 'Exposing nginx service...'
-        sh '''
-        pkill -f "kubectl port-forward" || true
-        nohup kubectl port-forward --address 0.0.0.0 service/nginx-service 80:80 > /dev/null 2>&1 &
-        '''
+            echo 'Exposing nginx service...'
+            sh '''
+            pkill -f "kubectl port-forward" || true
+            nohup kubectl port-forward --address 0.0.0.0 service/nginx-service 80:80 > /dev/null 2>&1 &
+            '''
             }
         }
 
