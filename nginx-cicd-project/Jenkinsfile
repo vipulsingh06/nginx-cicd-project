@@ -28,10 +28,10 @@ pipeline {
             steps {
         echo 'Deploying to kubernetes....'
         sh '''
-        kubectl apply -f ./nginx-cicd-project/deployment.yaml
-        kubectl apply -f ./nginx-cicd-project/service.yaml
+        kubectl apply --validate=false -f ./nginx-cicd-project/deployment.yaml
+        kubectl apply --validate=false -f ./nginx-cicd-project/service.yaml
         kubectl rollout restart deployment nginx-website
-	kubectl rollout status deployment nginx-website
+        kubectl rollout status deployment nginx-website
         '''
             }
         }
