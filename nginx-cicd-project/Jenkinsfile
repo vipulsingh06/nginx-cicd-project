@@ -2,24 +2,24 @@ pipeline {
     agent any
 
     stages {
-		stage('Debug Files') {
-    		steps {
-        		sh 'ls -la'
-    		}
-		}
-		
+        stage('Debug Files') {
+            steps {
+                        sh 'ls -la'
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 echo 'Creating Docker image...'
                 sh 'docker build -t nginx-website ./nginx-cicd-project'
             }
-            
+
         }
 
 
         stage('Load Image Into Kind') {
             steps {
-		echo 'Loading image into kind'
+                echo 'Loading image into kind'
                 sh 'kind load docker-image nginx-website'
             }
         }
@@ -31,12 +31,20 @@ pipeline {
         kubectl apply -f ./nginx-cicd-project/deployment.yaml
         kubectl apply -f ./nginx-cicd-project/service.yaml
         kubectl rollout restart deployment nginx-website
-        '''   
+        '''
             }
         }
-    
+
+        stage('Expose Service') {
+            steps {
+        echo 'Exposing nginx service...'
+        sh '''
+        pkill -f "kubectl port-forward" || true
+        nohup kubectl port-forward --address 0.0.0.0 service/nginx-service 80:80 > /dev/null 2>&1 &
+        '''
+            }
+        }
 
     }
-    
-}
 
+}
