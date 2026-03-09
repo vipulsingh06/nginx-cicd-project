@@ -305,16 +305,6 @@ kubectl get pods -w
 
 ---
 
-# 🚧 Future Improvements
-
-- Push Docker images to Docker Hub
-- Implement Kubernetes Ingress
-- Add monitoring with Prometheus & Grafana
-- Add centralized logging (ELK / Loki)
-- Deploy on EKS / GKE / AKS
-
----
-
 # 📚 Learning Outcomes
 
 This project demonstrates:
