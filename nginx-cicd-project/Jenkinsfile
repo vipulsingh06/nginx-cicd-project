@@ -15,7 +15,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 echo 'Creating Docker image...'
-                sh 'docker build -t nginx-website ./nginx-cicd-project'
+                sh 'docker build --pull=false -t nginx-website ./nginx-cicd-project'
             }
 
         }
@@ -32,8 +32,14 @@ pipeline {
             steps {
         echo 'Deploying to kubernetes....'
         sh '''
+        export KUBECONFIG=/var/lib/jenkins/.kube/config
+
+        kubectl cluser-info
+        kubectl get nodes
+
         kubectl apply --validate=false -f ./nginx-cicd-project/deployment.yaml
         kubectl apply --validate=false -f ./nginx-cicd-project/service.yaml
+
         kubectl rollout restart deployment nginx-website
         kubectl rollout status deployment nginx-website
         '''
