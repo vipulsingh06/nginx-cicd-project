@@ -6,3 +6,4 @@ nodes:
   extraPortMappings:
   - containerPort: 30007
     hostPort: 30007
+    protocol: TCP
