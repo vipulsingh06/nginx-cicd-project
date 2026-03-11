@@ -34,11 +34,23 @@ pipeline {
             export KUBECONFIG=/var/lib/jenkins/.kube/config
 
             echo "Waiting for Kubernetes API..."
+
+            Ready=false
+
             for i in {1..10}; do
-            /usr/bin/kubectl cluster-info && break
+            if /usr/bin/kubectl cluster-info; then
+                echo "Kubernetes API is ready!"
+                Ready=true
+                break
+            fi
+            echo "Waiting ..."
             sleep 5
             done
 
+            if [ "$Ready" = false ]; then
+                echo "Kubernetes API is not ready after waiting. Exiting."
+                exit 1
+            fi
             /usr/bin/kubectl get nodes
 
             /usr/bin/kubectl apply --validate=false -f ./nginx-cicd-project/deployment.yaml
@@ -62,4 +74,5 @@ pipeline {
 
     }
 
-}
+}Jenkinsfile
+
